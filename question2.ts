@@ -1,3 +1,4 @@
+import { StringDecoder } from "string_decoder";
 import { pipe } from "./node_modules/fp-ts/lib/function";
 
 const posts: Post[] = [
@@ -68,7 +69,6 @@ const hasError = (error: string): HasError => {
   return { status: "error", error: error };
 };
 
-type PostOrComment = "comments" | "posts";
 type PostComment = Post | Comment;
 
 interface Entity {
@@ -101,11 +101,13 @@ const isSuccess = <T extends Entity>(
   api: ApiResponse<T>
 ): api is Successful<T> => api.status === "success";
 
-const fetchMockData = (fetchType: PostOrComment): PostComment[] => {
-  if (fetchType === "posts") {
+const fetchMockData = (reqType: string): PostComment[] | string => {
+  if (reqType === "posts") {
     return posts;
-  } else {
+  } else if (reqType === "comments") {
     return comments;
+  } else {
+    return "No data available";
   }
 };
 
